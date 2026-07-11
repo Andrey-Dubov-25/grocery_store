@@ -1,5 +1,4 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from core import constants
@@ -12,7 +11,9 @@ class User(AbstractUser):
         max_length=constants.EMAIL_LEN,
         unique=True,
         verbose_name='Электронная почта',
-        help_text='Электронная почта пользователя'
+        help_text='Электронная почта пользователя',
+        null=True,
+        blank=True
     )
     username = models.CharField(
         max_length=constants.USERNAME_LEN,

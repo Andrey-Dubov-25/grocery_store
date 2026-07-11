@@ -8,19 +8,7 @@ admin.site.empty_value_display = 'Не задано'
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    """
-    Модель категории в админке.
-
-    Настройки интерфейса:
-    - list_display: вид в таблице списка пользователей;
-    - list_filter: поля для фильтрации;
-    - search_fields: поля для поиск;
-    - ordering: поля для сортировки списка.
-
-    Значения полей:
-    * name - название категории;
-    * slug - отображение в ссылке на сайте;
-    """
+    """Модель категории в админке."""
 
     list_display = ('name', 'slug')
     list_filter = ('name',)
@@ -30,19 +18,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(SubCategory)
 class SubCategoryAdmin(admin.ModelAdmin):
-    """
-    Модель подкатегории в админке.
-
-    Настройки интерфейса:
-    - list_display: вид в таблице списка пользователей;
-    - list_filter: поля для фильтрации;
-    - search_fields: поля для поиск;
-    - ordering: поля для сортировки списка.
-
-    Значения полей:
-    * name - название подкатегории;
-    * slug - отображение в ссылке на сайте;
-    """
+    """Модель подкатегории в админке."""
 
     list_display = ('name', 'slug')
     list_filter = ('name',)
@@ -51,76 +27,17 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 
 class ProductImageInline(admin.StackedInline):
+    """Модель фото продукта в админке."""
     model = ProductImage
+    max_num = 3
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    """
-    Модель продукта в админке.
-
-    Настройки интерфейса:
-    - list_display: вид в таблице списка пользователей;
-    - list_filter: поля для фильтрации;
-    - search_fields: поля для поиск;
-    - ordering: поля для сортировки списка.
-
-    Значения полей:
-    * name - название продукта;
-    * slug - отображение в ссылке на сайте;
-    * price - цена продукта;
-    * subcategory - подкатегория продукта.
-    """
+    """Модель продукта в админке."""
 
     list_display = ('name', 'slug', 'price', 'subcategory')
     list_filter = ('name',)
     search_fields = ('name', 'slug',)
     ordering = ('name',)
     inlines = (ProductImageInline, )
-
-@admin.register(Cart)
-class CartAdmin(admin.ModelAdmin):
-    """
-    Модель продукта в админке.
-
-    Настройки интерфейса:
-    - list_display: вид в таблице списка пользователей;
-    - list_filter: поля для фильтрации;
-    - search_fields: поля для поиск;
-    - ordering: поля для сортировки списка.
-
-    Значения полей:
-    * name - название продукта;
-    * slug - отображение в ссылке на сайте;
-    * price - цена продукта;
-    * subcategory - подкатегория продукта.
-    """
-
-    list_display = ('user',)
-    list_filter = ('user',)
-    search_fields = ('user',)
-    ordering = ('user',)
-
-
-@admin.register(CartItem)
-class CartItemAdmin(admin.ModelAdmin):
-    """
-    Модель продукта в админке.
-
-    Настройки интерфейса:
-    - list_display: вид в таблице списка пользователей;
-    - list_filter: поля для фильтрации;
-    - search_fields: поля для поиск;
-    - ordering: поля для сортировки списка.
-
-    Значения полей:
-    * name - название продукта;
-    * slug - отображение в ссылке на сайте;
-    * price - цена продукта;
-    * subcategory - подкатегория продукта.
-    """
-
-    list_display = ('cart', 'product', 'quantity')
-    list_filter = ('cart',)
-    search_fields = ('cart',)
-    ordering = ('cart',)
