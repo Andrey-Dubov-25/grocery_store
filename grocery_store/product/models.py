@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class Category(models.Model):
-    """Модель категорий."""
+    """Модель категории."""
     name = models.CharField(
         max_length=constants.CATEGORY_NAME_LEN,
         verbose_name='Название',
@@ -38,7 +38,7 @@ class Category(models.Model):
 
 
 class SubCategory(models.Model):
-    """Модель подкатегорий."""
+    """Модель подкатегории."""
     name = models.CharField(
         max_length=constants.SUBCATEGORY_NAME_LEN,
         verbose_name='Название',
@@ -76,7 +76,7 @@ class SubCategory(models.Model):
 
 
 class Product(models.Model):
-    """Модель продуктов."""
+    """Модель продукта."""
     name = models.CharField(
         max_length=constants.PRODUCT_NAME_LEN,
         verbose_name='Продукт',
@@ -112,6 +112,7 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
+    """Модель фото продукта с указанием размера."""
     SIZE_CHOICES = [
         ('small', 'Small'),
         ('medium', 'Medium'),
@@ -122,16 +123,19 @@ class ProductImage(models.Model):
         Product,
         on_delete=models.CASCADE,
         related_name='images',
-        verbose_name='Продукт'
+        verbose_name='Продукт',
+        help_text='Название продукта'
     )
     image = models.ImageField(
         upload_to='products/',
-        verbose_name='Файл изображения'
+        verbose_name='Файл изображения',
+        help_text='Фото продукта'
     )
     size_type = models.CharField(
         max_length=constants.MAX_SIZE_TYPE_LEN,
         choices=SIZE_CHOICES,
-        verbose_name='Размер'
+        verbose_name='Размер',
+        help_text='Размер фото'
     )
 
     class Meta:
@@ -149,6 +153,7 @@ class ProductImage(models.Model):
 
 
 class Cart(models.Model):
+    """Модель корзины пользователя."""
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -166,6 +171,7 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
+    """Модель товара в корзине пользователя."""
     cart = models.ForeignKey(
         Cart,
         on_delete=models.CASCADE,
