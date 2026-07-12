@@ -25,7 +25,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('name', 'slug', 'subcategories')
+        fields = ('name', 'slug', 'image', 'subcategories')
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -42,7 +42,6 @@ class ProductSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='subcategory.category.name')
     subcategory = serializers.CharField(source='subcategory.name')
     images = ProductImageSerializer(many=True, read_only=True)
-
 
     class Meta:
         model = Product
@@ -63,7 +62,7 @@ class CartItemCreateSerializer(serializers.ModelSerializer):
                 message=f'Количество должно быть не меньше {
                     constants.MIN_QUANTITY
                 }'
-                )
+            )
         ]
     )
 
@@ -83,36 +82,15 @@ class CartItemCreateSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = serializers.CharField(source='product.name')
+    """Сериализатор товара в корзине."""
+    product = serializers.CharField(source='product.name', read_only=True)
     price = serializers.DecimalField(
         source='product.price',
-        max_digits=constants.PRODUCT_PRICE_MAX_DIGITS,
-        decimal_places=constants.PRODUCT_PRICE_DECIMAL_PLACES
-    )
-    quantity = serializers.IntegerField(
-        default=constants.MIN_QUANTITY,
-        validators=[
-            MinValueValidator(
-                constants.MIN_QUANTITY,
-                message=f'Количество должно быть не меньше {
-                    constants.MIN_QUANTITY
-                }'
-                )
-        ]
-    )
-
-    class Meta:
-        model = CartItem
-        fields = ('id', 'product_id', 'product', 'price', 'quantity')
-
-
-class CartSummarySerializer(serializers.Serializer):
-    """Сериализатор для списка товаров."""
-
-    items = CartItemSerializer(many=True, read_only=True)
-    total_items = serializers.IntegerField(read_only=True)
-    total_amount = serializers.DecimalField(
         max_digits=constants.PRODUCT_PRICE_MAX_DIGITS,
         decimal_places=constants.PRODUCT_PRICE_DECIMAL_PLACES,
         read_only=True
     )
+
+    class Meta:
+        model = CartItem
+        fields = ('id', 'product', 'price', 'quantity')

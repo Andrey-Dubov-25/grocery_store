@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.shortcuts import get_object_or_404, render
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import action
@@ -9,7 +11,6 @@ from product.models import Cart, CartItem, Category, Product
 from .serializers import (
     CartItemCreateSerializer,
     CartItemSerializer,
-    CartSummarySerializer,
     CategorySerializer,
     ProductSerializer,
 )
@@ -61,8 +62,7 @@ class AddToCartView(APIView):
         quantity = serializer.validated_data.get('quantity')
         cart_item, is_created = CartItem.objects.get_or_create(
             cart=cart,
-            product_id=product_id,
-            defaults={'quantity': quantity},
+            product_id=product_id
         )
 
         if not is_created:
@@ -80,26 +80,28 @@ class CartItemDetailView(APIView):
     """Редактирование наличия товара в корзине."""
 
     @staticmethod
-    def get_item(user, item_id):
+    def get_product(user, id):
         """
         Возвращает товар из корзины, принадлежащей конкретному пользователю.
         """
         cart, _ = Cart.objects.get_or_create(user=user)
-        return get_object_or_404(CartItem, id=item_id, cart=cart)
+        return get_object_or_404(CartItem, id=id, cart=cart)
 
-    def patch(self, request, item_id):
+    def patch(self, request, id):
         """Обновление количества товара в корзине."""
-        item = self.get_item(request.user, item_id)
-        quantity = request.data.get('quantity')
-        quantity = int(quantity)
-        item.quantity = quantity
-        item.save(update_fields=['quantity'])
-        serializer = CartItemSerializer(item)
+        item = self.get_product(request.user, id)
+        serializer = CartItemSerializer(
+            instance=item,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)
 
-    def delete(self, request, item_id):
+    def delete(self, request, id):
         """Удаление товара из корзины."""
-        item = self.get_item(request.user, item_id)
+        item = self.get_product(request.user, id)
         item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -110,17 +112,22 @@ class CartView(APIView):
     def get(self, request):
         cart, _ = Cart.objects.get_or_create(user=request.user)
         items = CartItem.objects.filter(cart=cart).select_related('product')
-        total_items = sum(item.quantity for item in items)
-        total_amount = sum(
-            item.quantity * item.product.price for item in items
-        )
-        data = {
-            'items': items,
+        total_items = 0
+        total_amount = Decimal('0')
+        serialized_items = []
+
+        for item in items:
+            quantity = item.quantity
+            price = item.product.price
+            total_items += quantity
+            total_amount += quantity * price
+            serialized_items.append(CartItemSerializer(item).data)
+
+        return Response({
+            'items': serialized_items,
             'total_items': total_items,
-            'total_amount': total_amount
-        }
-        serializer = CartSummarySerializer(data)
-        return Response(serializer.data)
+            'total_amount': total_amount,
+        })
 
 
 class CartClearView(APIView):

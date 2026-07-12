@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from core import constants
@@ -128,7 +129,7 @@ class ProductImage(models.Model):
         verbose_name='Файл изображения'
     )
     size_type = models.CharField(
-        max_length=10,
+        max_length=constants.MAX_SIZE_TYPE_LEN,
         choices=SIZE_CHOICES,
         verbose_name='Размер'
     )
@@ -180,7 +181,8 @@ class CartItem(models.Model):
         help_text='Товар в корзине'
     )
     quantity = models.PositiveIntegerField(
-        default=1,
+        default=constants.MIN_QUANTITY,
+        validators=[MinValueValidator(constants.MIN_QUANTITY)],
         verbose_name='Количество',
         help_text='Количество товара в корзине'
     )

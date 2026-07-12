@@ -20,8 +20,8 @@ urlpatterns = [
     path('cart/add/', AddToCartView.as_view(), name='add-to-cart'),
     path('cart/clear/', CartClearView.as_view(), name='cart-clear'),
     path(
-        'cart/items/<int:item_id>/',
+        'cart/product/<int:id>/',
         CartItemDetailView.as_view(),
-        name='cart-item-detail'
+        name='cart-product-detail'
     ),
 ]
