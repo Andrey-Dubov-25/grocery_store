@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from.models import Category, SubCategory, Product, Cart, CartItem, ProductImage
+from .models import Category, SubCategory, Product, ProductImage
 
 
 admin.site.empty_value_display = 'Не задано'

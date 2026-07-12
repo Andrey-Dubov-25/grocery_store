@@ -76,7 +76,7 @@ API предоставляет следующие возможности:
 ## Примеры запросов API
 При локальном запуске проекта документация доступна по адресу:
 ```
-http://localhost/swagger/
+http://localhost/api/swagger/
 ```
 
 **Получение списка всех категорий**
@@ -309,7 +309,7 @@ git clone https://github.com/Andrey-Dubov-25/grocery_store
 ```
 
 ```
-cd grocery_store
+cd grocery_store/crocery_store
 ```
 ```
 
@@ -333,10 +333,6 @@ python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-```
-cd grocery_store
-```
-
 Выполнить миграции:
 
 ```
@@ -347,4 +343,66 @@ python3 manage.py migrate
 
 ```
 python3 manage.py runserver
+```
+
+
+**Через Docker**
+
+Клонировать репозиторий и перейти в него в командной строке:
+
+```
+git clone https://github.com/Andrey-Dubov-25/grocery_store
+```
+
+```
+cd grocery_store
+```
+
+Запустить контейнеры:
+
+```
+docker compose up --build
+```
+
+Собрать статику:
+
+```
+docker compose exec grocery_store python manage.py collectstatic --noinput
+```
+
+```
+docker compose exec grocery_store cp -r /app/collected_static/. /grocery_store_static/static/ 
+
+```
+Применить миграции:
+
+```
+docker compose exec grocery_store python manage.py migrate
+```
+
+Создать суперпользователя:
+
+```
+docker compose exec grocery_store python manage.py createsuperuser
+```
+
+**Запуск тестов**
+
+Перед запуском тестов убедитесь, что вы находитесь в корневой директории проекта grocery_store и DEBUG=True, после чего выполните команду:
+
+
+```
+cd grocery_store
+```
+
+Запуск тестов на pytest:
+
+```
+pytest
+```
+
+Запуск flake8:
+
+```
+flake8
 ```

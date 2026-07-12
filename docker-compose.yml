@@ -1,0 +1,25 @@
+volumes:
+  pg_data:
+  static:
+
+services:
+  db:
+    image: postgres:13.10
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  grocery_store:
+    image: 25andrey25/grocery_store_backend
+    env_file: .env
+    depends_on:
+      - db
+    volumes:
+      - static:/grocery_store_static
+  gateway:
+    image: 25andrey25/grocery_store_gateway
+    ports:
+      - 8000:80 
+    depends_on:
+      - grocery_store
+    volumes:
+      - static:/staticfiles
