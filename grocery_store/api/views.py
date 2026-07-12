@@ -132,6 +132,7 @@ class CartView(APIView):
 
 class CartClearView(APIView):
     """Полностью удаляет корзину пользователя."""
+
     def delete(self, request):
         cart, _ = Cart.objects.get_or_create(user=request.user)
         CartItem.objects.filter(cart=cart).delete()

@@ -27,12 +27,12 @@ urlpatterns = [
     path(
         'auth/register/',
         UserViewSet.as_view({'post': 'create'}),
-        name='auth-register',
+        name='register',
     ),
     path(
         'auth/login/',
         TokenObtainPairView.as_view(),
-        name='auth-login',
+        name='login',
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -53,4 +53,4 @@ urlpatterns += [
        schema_view.with_ui('redoc', cache_timeout=0),
        name='schema-redoc'
     ),
-] 
+]
